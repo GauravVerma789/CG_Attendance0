@@ -8,16 +8,38 @@
   --secondary: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
-  --background: #f9fafb;
   --surface: #ffffff;
   --text-primary: #111827;
   --text-secondary: #4b5563;
   --text-tertiary: #9ca3af;
 }
 
+/* Apply background color to all possible root elements */
+html,
+body,
+#root,
+#root > div {
+  background-color: #7d95d0;
+  min-height: 100vh;
+}
+
+/* Login page gradient background */
+.page-background {
+  background: linear-gradient(135deg, #223063 0%, #362e5b 50%, #615690 100%);
+}
+
+/* Admin dashboard gradient background */
+.admin-dashboard-bg {
+  background: linear-gradient(135deg, #b8c0da 0%, #56469e 50%, #190d4f 100%);
+}
+
+/* Admin sidebar gradient background */
+.admin-sidebar-bg {
+  background: linear-gradient(140deg, #bbbbc9, #9c9ff5, #6d70bd, #0d2b7300);
+}
+
 body {
   font-family: 'Inter', sans-serif;
-  background-color: var(--background);
   color: var(--text-primary);
   overflow-x: hidden;
 }
@@ -26,41 +48,36 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Poppins', sans-serif;
 }
 
-/* Modern Card Styles */
+/* Card Styles */
 .card {
-  @apply bg-white rounded-xl shadow-lg p-6 transition-all duration-300 hover:shadow-xl;
-  backdrop-filter: blur(10px);
-  background-color: rgba(255, 255, 255, 0.9);
+  @apply bg-white rounded-xl shadow-lg p-6;
 }
 
-/* Modern Button Styles */
+/* Button Styles */
 .btn {
-  @apply px-6 py-3 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 transform hover:scale-105 active:scale-95;
+  @apply px-6 py-3 rounded-lg font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2;
 }
 
 .btn-primary {
-  @apply bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500 shadow-md hover:shadow-lg;
+  @apply bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500;
 }
 
 .btn-secondary {
-  @apply bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500 shadow-md hover:shadow-lg;
+  @apply bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500;
 }
 
 .btn-danger {
-  @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 shadow-md hover:shadow-lg;
+  @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
 }
 
-/* Modern Input Styles */
+/* Input Styles */
 .input {
   @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-300;
-  background-color: rgba(255, 255, 255, 0.9);
 }
 
-/* Modern Table Styles */
+/* Table Styles */
 .table-container {
   @apply w-full overflow-x-auto rounded-xl shadow-lg;
-  background-color: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(10px);
 }
 
 .table {
@@ -68,161 +85,46 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .table-header {
-  @apply bg-gray-50/80 backdrop-blur-sm;
+  @apply bg-gray-50;
 }
 
 .table-cell {
-  @apply px-6 py-4 text-left text-sm font-medium text-gray-500 uppercase tracking-wider;
+  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
 }
 
 .table-row {
-  @apply bg-white/80 hover:bg-gray-50/90 transition-colors duration-200;
+  @apply bg-white hover:bg-gray-50;
 }
 
 .table-data {
   @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
 }
 
-/* Loading Animations */
-.login-loading {
-  position: relative;
-  width: 24px;
-  height: 24px;
-}
-
-.login-loading::before,
-.login-loading::after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
+/* Loading Spinner */
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 4px solid var(--primary);
+  border-top-color: transparent;
   border-radius: 50%;
-  background-color: currentColor;
-  opacity: 0.6;
-  animation: login-pulse 1.2s infinite ease-in-out;
+  animation: spin 1s linear infinite;
 }
 
-.login-loading::after {
-  animation-delay: -0.6s;
-}
-
-@keyframes login-pulse {
-  0%, 100% {
-    transform: scale(0);
-    opacity: 0.6;
-  }
-  50% {
-    transform: scale(1);
-    opacity: 0;
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
-/* Card Swipe Animation */
-.login-card-loading {
-  width: 180px;
-  height: 120px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.95);
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-  display: inline-block;
-  vertical-align: middle;
-  backdrop-filter: blur(15px);
-}
-
-.login-card-loading::after {
-  content: '';
-  position: absolute;
-  left: 0%;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(110, 168, 254, 0.5), transparent);
-  border-radius: 24px;
-  transform: translateX(-100%);
-  animation: card-swipe 2s cubic-bezier(.6,0,.4,1) infinite;
-}
-
-@keyframes card-swipe {
-  0% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(100%);
+/* Responsive Design */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
-/* Page Transitions */
-.page-enter {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.page-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 300ms, transform 300ms;
-}
-
-.page-exit {
-  opacity: 1;
-}
-
-.page-exit-active {
-  opacity: 0;
-  transition: opacity 300ms;
-}
-
-@layer components {
-  .btn {
-    @apply px-4 py-2 rounded-md font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2;
-  }
-  
-  .btn-primary {
-    @apply bg-indigo-600 text-white hover:bg-indigo-700 focus:ring-indigo-500;
-  }
-  
-  .btn-secondary {
-    @apply bg-emerald-600 text-white hover:bg-emerald-700 focus:ring-emerald-500;
-  }
-  
-  .btn-danger {
-    @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
-  }
-  
-  .card {
-    @apply bg-white rounded-lg shadow-md p-6;
-  }
-  
-  .input {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500;
-  }
-  
-  .table-container {
-    @apply w-full overflow-x-auto rounded-lg shadow;
-  }
-  
-  .table {
-    @apply min-w-full divide-y divide-gray-200;
-  }
-  
-  .table-header {
-    @apply bg-gray-50;
-  }
-  
-  .table-cell {
-    @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
-  }
-  
-  .table-row {
-    @apply bg-white hover:bg-gray-50;
-  }
-  
-  .table-data {
-    @apply px-6 py-4 whitespace-nowrap text-sm text-gray-900;
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
   }
 }

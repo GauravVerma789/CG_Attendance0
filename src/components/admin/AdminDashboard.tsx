@@ -3,12 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAttendance, AttendanceRecord } from '../../contexts/AttendanceContext';
 
-
-
-
 import EmployeeDetailsDashboard from './EmployeeDetailsDashboard';
 import Sidebar from '../Sidebar';
-
 
 import AdminDashboardContent from './AdminDashboardContent';
 import AdminAttendance from './AdminAttendance';
@@ -56,19 +52,13 @@ const AdminDashboard = () => {
     calculateStats();
   }, [attendanceRecords, selectedDate]);
 
-
-
-  
   const handleCloseEmployeeDetails = () => {
     setSelectedEmployee(null);
   };
 
-  // Get today's attendance records
- 
-
   if (isLoading) {
     return (
-      <div className="min-h-screen page-background flex items-center justify-center">
+      <div className="min-h-screen admin-dashboard-bg flex items-center justify-center">
         <div className="text-center">
           <div className="loading-spinner mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading dashboard...</p>
@@ -78,7 +68,7 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row min-h-screen page-background">
+    <div className="flex flex-col lg:flex-row  admin-dashboard-bg">
       <Sidebar />
       <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-x-hidden">
         <Routes>

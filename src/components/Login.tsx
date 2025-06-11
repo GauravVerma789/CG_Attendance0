@@ -7,8 +7,8 @@ import { useAuth } from '../contexts/AuthContext';
 function LoginLoadingOverlay() {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-40">
-      <span className="login-card-loading mb-6"></span>
-      <span className="text-white text-lg font-semibold tracking-wide drop-shadow-lg">Loading AttendEase...</span>
+      <div className="loading-spinner"></div>
+      <span className="text-white text-lg font-semibold mt-4">Loading...</span>
     </div>
   );
 }
@@ -50,7 +50,7 @@ const Login: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-100">
+    <div className="min-h-screen flex items-center justify-center bg-[#585394]">
       {isLoading && <LoginLoadingOverlay />}
       <div className="max-w-md w-full px-6 py-8 bg-white rounded-xl shadow-lg">
         <div className="text-center mb-8">
@@ -102,8 +102,7 @@ const Login: React.FC = () => {
           <button
             type="submit"
             disabled={isLoading}
-            className={`btn btn-primary w-full flex justify-center items-center gap-2 transition-all duration-300 ${isLoading ? 'opacity-90 cursor-not-allowed' : ''
-              }`}
+            className="btn btn-primary w-full flex justify-center items-center gap-2"
             aria-busy={isLoading}
           >
             <span>Sign In</span>

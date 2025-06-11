@@ -8,7 +8,6 @@ import StaffLogin from './components/auth/StaffLogin';
 import AdminDashboard from './components/admin/AdminDashboard';
 import StaffDashboard from './components/staff/StaffDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
-import ParticlesBackground from './components/Particles';
 import './styles/global.css';
 
 // Custom hook to load Google Fonts once
@@ -41,11 +40,8 @@ function App(): JSX.Element {
     <Router>
       <AuthProvider>
         <AttendanceProvider>
-          <div className="min-h-screen font-sans relative">
-            <div className="fixed inset-0 -z-10">
-              <ParticlesBackground />
-            </div>
-            <div className="relative z-10">
+          <div className="min-h-screen font-sans">
+            <div className="relative">
               <Routes>
                 <Route path="/" element={<LoginChoice />} />
                 <Route path="/admin-login" element={<AdminLogin />} />

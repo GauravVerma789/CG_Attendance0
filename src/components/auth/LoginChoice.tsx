@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 
 const LoginChoice = () => {
   return (
-    <div className="min-h-screen page-background flex items-center justify-center">
-      <div className="edusync-glass-card p-8 w-96 transform transition-all hover:scale-105">
+    <div className="min-h-screen flex items-center justify-center bg-[#585394]">
+      <div className="bg-white p-8 w-96 rounded-xl shadow-lg">
         <div className="text-center mb-8">
           <div className="w-24 h-24 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-4xl mx-auto mb-4">
             CG

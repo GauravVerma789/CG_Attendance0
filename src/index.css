@@ -14,6 +14,12 @@
   --text-primary: #1f2937;
   --text-secondary: #6b7280;
   --text-light: #ffffff;
+  --svg-background: #b4dad9b3;
+}
+
+/* Apply SVG background to entire site */
+html, body {
+  background-color: rgb(136, 136, 195);
 }
 
 /* Glass Card Effect */
@@ -32,7 +38,7 @@
 }
 
 /* Background Gradients */
-.bg-gradient-primary {
+gradient-primary {
   background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
 }
 
@@ -50,7 +56,7 @@
 
 /* Page Background */
 .page-background {
-  background: linear-gradient(135deg, #e0e7ff 0%, #f5f3ff 50%, #ede9fe 100%);
+  background: linear-gradient(135deg, #5d6ca0 0%, #1a1146 50%, #665e8b 100%);
 }
 
 .dark .page-background {
