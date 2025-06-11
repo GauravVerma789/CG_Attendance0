@@ -1,42 +1,36 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAttendance, AttendanceRecord } from '../../contexts/AttendanceContext';
-import { mockUsers } from '../../data/mockData';
-import { format, parseISO } from 'date-fns';
-import { Download, Calendar } from 'lucide-react';
-import { exportToCSV, exportToPDF } from '../../utils/exportUtils';
+
+
+
+
 import EmployeeDetailsDashboard from './EmployeeDetailsDashboard';
 import Sidebar from '../Sidebar';
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer
-} from 'recharts';
+
+
 import AdminDashboardContent from './AdminDashboardContent';
 import AdminAttendance from './AdminAttendance';
 import AdminEmployees from './AdminEmployees';
 import AdminCalendar from './AdminCalendar';
+import { format } from 'date-fns';
 
 const AdminDashboard = () => {
-  const { currentUser } = useAuth();
-  const { attendanceRecords, markAttendance } = useAttendance();
-  const navigate = useNavigate();
+  const { } = useAuth();
+  const { attendanceRecords } = useAttendance();
+  
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [exportType, setExportType] = useState<'day' | 'week' | 'month'>('day');
-  const [stats, setStats] = useState({
+  const [selectedDate] = useState(new Date());
+  const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
+
+  // Add this state for stats:
+  const [, setStats] = useState({
     totalStaff: 0,
     presentToday: 0,
     absentToday: 0,
-    lateToday: 0
+    lateToday: 0,
   });
-  const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
 
   useEffect(() => {
     const calculateStats = () => {
@@ -44,7 +38,6 @@ const AdminDashboard = () => {
         const today = format(selectedDate, 'yyyy-MM-dd');
         const todayData = attendanceRecords.filter((record: AttendanceRecord) => record.date === today);
         
-        // Get unique staff members from attendance data
         const uniqueStaffIds = new Set(attendanceRecords.map((r: AttendanceRecord) => r.userId));
         
         setStats({
@@ -63,37 +56,15 @@ const AdminDashboard = () => {
     calculateStats();
   }, [attendanceRecords, selectedDate]);
 
-  const handleMarkAttendance = (userId: number, status: 'present' | 'absent' | 'half-day') => {
-    markAttendance(userId, status, format(selectedDate, 'yyyy-MM-dd'));
-  };
 
-  const handleExport = (format: 'csv' | 'pdf') => {
-    if (format === 'csv') {
-      exportToCSV(attendanceRecords, exportType, selectedDate);
-    } else {
-      exportToPDF(attendanceRecords, exportType, selectedDate);
-    }
-  };
 
-  const handleEmployeeClick = (employee: any) => {
-    setSelectedEmployee(employee);
-  };
-
+  
   const handleCloseEmployeeDetails = () => {
     setSelectedEmployee(null);
   };
 
   // Get today's attendance records
-  const todayAttendance = attendanceRecords.filter(
-    record => record.date === format(selectedDate, 'yyyy-MM-dd')
-  );
-
-  // Prepare data for the chart
-  const chartData = [
-    { name: 'Present', value: stats.presentToday },
-    { name: 'Absent', value: stats.absentToday },
-    { name: 'Late', value: stats.lateToday }
-  ];
+ 
 
   if (isLoading) {
     return (

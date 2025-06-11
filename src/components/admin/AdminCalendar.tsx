@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import { format, parseISO, isSameDay } from 'date-fns';
 import Calendar2 from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { useAttendance, AttendanceRecord } from '../../contexts/AttendanceContext';
+import { useAttendance} from '../../contexts/AttendanceContext';
 
 const AdminCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());

@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Lock, UserRound } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
-// Fullscreen loading overlay component
+// Loading overlay component
 function LoginLoadingOverlay() {
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black bg-opacity-40">
@@ -13,38 +13,41 @@ function LoginLoadingOverlay() {
   );
 }
 
-const Login = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+const Login: React.FC = () => {
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
     try {
-      const success = await login(username, password);
-      
-      if (success) {
-        // Redirect based on user role
-        if (username === 'admin') {
-          navigate('/admin');
-        } else {
-          navigate('/staff');
-        }
+      // Call login with an object matching LoginCredentials
+      await login({
+        identifier: username,
+        password,
+        role: username.toLowerCase() === 'admin' ? 'admin' : 'staff',
+      });
+
+      // If login succeeded (no error), navigate based on role
+      if (username.toLowerCase() === 'admin') {
+        navigate('/admin');
       } else {
-        setError('Invalid username or password');
+        navigate('/staff');
       }
     } catch (err) {
-      setError('Failed to log in. Please try again.');
+      console.error('Login error:', err);
+      setError('Invalid username or password');
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-blue-100">
@@ -56,12 +59,12 @@ const Login = () => {
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+          <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm" role="alert">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           <div className="relative">
             <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
               <UserRound size={20} />
@@ -70,10 +73,12 @@ const Login = () => {
               type="text"
               placeholder="Username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => setUsername(e.target.value.trim())}
               className="input pl-10"
               required
               disabled={isLoading}
+              autoComplete="username"
+              aria-label="Username"
             />
           </div>
 
@@ -89,15 +94,17 @@ const Login = () => {
               className="input pl-10"
               required
               disabled={isLoading}
+              autoComplete="current-password"
+              aria-label="Password"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className={`btn btn-primary w-full flex justify-center items-center gap-2 transition-all duration-300 ${
-              isLoading ? 'opacity-90 cursor-not-allowed' : ''
-            }`}
+            className={`btn btn-primary w-full flex justify-center items-center gap-2 transition-all duration-300 ${isLoading ? 'opacity-90 cursor-not-allowed' : ''
+              }`}
+            aria-busy={isLoading}
           >
             <span>Sign In</span>
             <ArrowRight size={18} />

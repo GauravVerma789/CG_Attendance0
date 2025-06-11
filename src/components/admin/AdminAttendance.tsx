@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useAttendance, AttendanceRecord } from '../../contexts/AttendanceContext';
+import { useState} from 'react';
+import { useAttendance} from '../../contexts/AttendanceContext';
 import { mockUsers } from '../../data/mockData';
 import { format } from 'date-fns';
 import EmployeeDetailsDashboard from './EmployeeDetailsDashboard';
 
 const AdminAttendance = () => {
   const { attendanceRecords, markAttendance } = useAttendance();
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate] = useState(new Date());
   const [selectedEmployee, setSelectedEmployee] = useState<any | null>(null);
 
   const todayAttendance = attendanceRecords.filter(

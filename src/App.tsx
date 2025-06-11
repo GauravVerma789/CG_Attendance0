@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { JSX, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { AttendanceProvider } from './contexts/AttendanceContext';
 import LoginChoice from './components/auth/LoginChoice';
@@ -11,17 +11,31 @@ import ProtectedRoute from './components/ProtectedRoute';
 import ParticlesBackground from './components/Particles';
 import './styles/global.css';
 
-function App() {
-  // Load fonts
+// Custom hook to load Google Fonts once
+function useLoadFonts() {
   useEffect(() => {
     const link = document.createElement('link');
     link.href = 'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&display=swap';
     link.rel = 'stylesheet';
     document.head.appendChild(link);
+
     return () => {
       document.head.removeChild(link);
     };
   }, []);
+}
+
+// Minimal fallback page for unmatched routes
+function NotFoundPage() {
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <h1 className="text-4xl font-bold">404 - Page Not Found</h1>
+    </div>
+  );
+}
+
+function App(): JSX.Element {
+  useLoadFonts();
 
   return (
     <Router>
@@ -36,16 +50,24 @@ function App() {
                 <Route path="/" element={<LoginChoice />} />
                 <Route path="/admin-login" element={<AdminLogin />} />
                 <Route path="/staff-login" element={<StaffLogin />} />
-                <Route path="/admin/*" element={
-                  <ProtectedRoute role="admin">
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                } />
-                <Route path="/staff/*" element={
-                  <ProtectedRoute role="staff">
-                    <StaffDashboard />
-                  </ProtectedRoute>
-                } />
+                <Route
+                  path="/admin/*"
+                  element={
+                    <ProtectedRoute role="admin">
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/staff/*"
+                  element={
+                    <ProtectedRoute role="staff">
+                      <StaffDashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                {/* Fallback route for unmatched URLs */}
+                <Route path="*" element={<NotFoundPage />} />
               </Routes>
             </div>
           </div>

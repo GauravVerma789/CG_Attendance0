@@ -16,7 +16,8 @@ const AdminLogin: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await login(email, password, 'admin');
+      // ✅ Pass `email` as `identifier`
+      await login({ identifier: email, password, role: 'admin' });
       navigate('/admin/dashboard');
     } catch (err) {
       setError('Invalid email or password');
@@ -30,7 +31,7 @@ const AdminLogin: React.FC = () => {
       <div className="w-full max-w-md">
         <div className="edusync-glass-card p-8">
           <h2 className="text-3xl font-bold text-center text-text-primary mb-8">Admin Login</h2>
-          
+
           {error && (
             <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
               {error}
@@ -76,6 +77,7 @@ const AdminLogin: React.FC = () => {
           </form>
         </div>
       </div>
+
       {isLoading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="flex flex-col items-center">
@@ -88,4 +90,4 @@ const AdminLogin: React.FC = () => {
   );
 };
 
-export default AdminLogin; 
+export default AdminLogin;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { format, parseISO, isSameDay } from 'date-fns';
-import { BarChartHorizontalBig, Calendar, Check, Clock, LogOut, UserRound, CircleX, Download } from 'lucide-react';
+import { Clock, Download } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useAttendance } from '../../contexts/AttendanceContext';
 import Calendar2 from 'react-calendar';
@@ -20,9 +20,9 @@ import {
 
 const StaffDashboard = () => {
   const { currentUser, logout } = useAuth();
-  const { userAttendance, punchIn, punchOut, markAttendance } = useAttendance();
+  const { userAttendance, punchIn, punchOut } = useAttendance();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [showCalendar, setShowCalendar] = useState(false);
+  const [] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [exportType, setExportType] = useState<'day' | 'week' | 'month'>('day');
   const [stats, setStats] = useState({
@@ -56,7 +56,7 @@ const StaffDashboard = () => {
   }, [userAttendance, currentUser]);
 
   // Format the selected date to YYYY-MM-DD for filtering
-  const formattedDate = format(selectedDate, 'yyyy-MM-dd');
+  // const formattedDate = format(selectedDate, 'yyyy-MM-dd');
   
   // Check if today's attendance is already marked
   const todayAttendance = userAttendance.find(
@@ -67,10 +67,10 @@ const StaffDashboard = () => {
   const hasPunchedOut = !!todayAttendance?.punchOutTime;
   
   // Calculate attendance statistics
-  const totalDays = userAttendance.length;
-  const presentDays = userAttendance.filter(record => record.status === 'present').length;
-  const absentDays = userAttendance.filter(record => record.status === 'absent').length;
-  const halfDays = userAttendance.filter(record => record.status === 'half-day').length;
+  // const totalDays = userAttendance.length;
+  // const presentDays = userAttendance.filter(record => record.status === 'present').length;
+  // const absentDays = userAttendance.filter(record => record.status === 'absent').length;
+  // const halfDays = userAttendance.filter(record => record.status === 'half-day').length;
   
   // Sort attendance records by date (newest first)
   const sortedAttendance = [...userAttendance].sort((a, b) => 

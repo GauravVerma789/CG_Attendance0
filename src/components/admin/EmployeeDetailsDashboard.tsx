@@ -17,7 +17,7 @@ import {
 import { useAttendance } from '../../contexts/AttendanceContext';
 import { User } from '../../contexts/AuthContext'; // Assuming User type is exported
 import { format, parseISO } from 'date-fns';
-import { CheckCircle, XCircle, Clock } from 'lucide-react'; // Import icons
+import { CheckCircle, XCircle, Clock } from 'lucide-react';
 
 interface EmployeeDetailsDashboardProps {
   employee: User | null;
@@ -27,57 +27,52 @@ interface EmployeeDetailsDashboardProps {
 const EmployeeDetailsDashboard: React.FC<EmployeeDetailsDashboardProps> = ({ employee, onClose }) => {
   const { attendanceRecords } = useAttendance();
 
-  if (!employee) {
-    return null;
-  }
+  if (!employee) return null;
 
+  // Filter attendance for the current employee
   const employeeAttendance = attendanceRecords.filter(record => record.userId === employee.id);
 
-  // Calculate numerical summaries
+  // Summaries
   const presentDays = employeeAttendance.filter(record => record.status === 'present').length;
   const absentDays = employeeAttendance.filter(record => record.status === 'absent').length;
   const halfDays = employeeAttendance.filter(record => record.status === 'half-day').length;
 
-  // Prepare data for Line Chart (Daily attendance status over time)
-  const dailyAttendanceData = employeeAttendance.reduce((acc: any, record) => {
-    const date = format(parseISO(record.date), 'MMM dd');
-    if (!acc[date]) {
-      acc[date] = { present: 0, absent: 0, halfDay: 0, date: date };
-    }
+  // Line chart data (daily)
+  const dailyAttendanceData = employeeAttendance.reduce<Record<string, any>>((acc, record) => {
+    const date = format(parseISO(record.date), 'MMM dd yyyy'); // Use yyyy for proper sorting
+    if (!acc[date]) acc[date] = { date, present: 0, absent: 0, halfDay: 0 };
     if (record.status === 'present') acc[date].present++;
-    if (record.status === 'absent') acc[date].absent++;
-    if (record.status === 'half-day') acc[date].halfDay++;
+    else if (record.status === 'absent') acc[date].absent++;
+    else if (record.status === 'half-day') acc[date].halfDay++;
     return acc;
   }, {});
 
-  const lineChartData = Object.values(dailyAttendanceData).sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  const lineChartData = Object.values(dailyAttendanceData).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
-  // Prepare data for Bar Chart (Monthly attendance summary)
-  const monthlyAttendanceData = employeeAttendance.reduce((acc: any, record) => {
+  // Bar chart data (monthly)
+  const monthlyAttendanceData = employeeAttendance.reduce<Record<string, any>>((acc, record) => {
     const month = format(parseISO(record.date), 'MMM yyyy');
-    if (!acc[month]) {
-      acc[month] = { present: 0, absent: 0, halfDay: 0, name: month };
-    }
+    if (!acc[month]) acc[month] = { name: month, present: 0, absent: 0, halfDay: 0 };
     if (record.status === 'present') acc[month].present++;
-    if (record.status === 'absent') acc[month].absent++;
-    if (record.status === 'half-day') acc[month].halfDay++;
+    else if (record.status === 'absent') acc[month].absent++;
+    else if (record.status === 'half-day') acc[month].halfDay++;
     return acc;
   }, {});
 
-  const barChartData = Object.values(monthlyAttendanceData).sort((a: any, b: any) => new Date(a.name).getTime() - new Date(b.name).getTime());
+  const barChartData = Object.values(monthlyAttendanceData).sort((a, b) => new Date(a.name).getTime() - new Date(b.name).getTime());
 
-  // Prepare data for Pie Chart (Overall attendance distribution)
-  const overallStatusCounts = employeeAttendance.reduce((acc: any, record) => {
+  // Pie chart data (overall)
+  const overallStatusCounts = employeeAttendance.reduce<Record<string, number>>((acc, record) => {
     acc[record.status] = (acc[record.status] || 0) + 1;
     return acc;
   }, {});
 
-  const pieChartData = Object.keys(overallStatusCounts).map(status => ({
+  const pieChartData = Object.entries(overallStatusCounts).map(([status, value]) => ({
     name: status.charAt(0).toUpperCase() + status.slice(1),
-    value: overallStatusCounts[status]
+    value,
   }));
 
-  const PIE_COLORS = ['#10b981', '#ef4444', '#f59e0b', '#6b7280']; // Success, Danger, Warning, Secondary
+  const PIE_COLORS = ['#10b981', '#ef4444', '#f59e0b', '#6b7280']; // Green, Red, Yellow, Gray
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
@@ -85,12 +80,14 @@ const EmployeeDetailsDashboard: React.FC<EmployeeDetailsDashboardProps> = ({ emp
         <button
           onClick={onClose}
           className="absolute top-4 right-4 text-text-secondary hover:text-text-primary text-2xl font-bold"
+          aria-label="Close details"
         >
           &times;
         </button>
+
         <h2 className="text-3xl font-bold text-text-primary mb-6">Attendance Details for {employee.name}</h2>
 
-        {/* New section for numerical attendance summary */}
+        {/* Attendance Summary */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="stats-card bg-green-50 border-l-4 border-green-600 p-4 rounded-lg shadow-md flex items-center justify-between">
             <div>
@@ -115,6 +112,7 @@ const EmployeeDetailsDashboard: React.FC<EmployeeDetailsDashboardProps> = ({ emp
           </div>
         </div>
 
+        {/* Charts Grid */}
         <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Line Chart */}
           <div className="chart-container flex flex-col">
@@ -122,13 +120,13 @@ const EmployeeDetailsDashboard: React.FC<EmployeeDetailsDashboardProps> = ({ emp
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={lineChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" className="text-text-secondary" />
-                <YAxis className="text-text-secondary" />
+                <XAxis dataKey="date" />
+                <YAxis />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="present" stroke="var(--success)" activeDot={{ r: 8 }} name="Present" />
-                <Line type="monotone" dataKey="absent" stroke="var(--danger)" activeDot={{ r: 8 }} name="Absent" />
-                <Line type="monotone" dataKey="halfDay" stroke="var(--warning)" activeDot={{ r: 8 }} name="Half Day" />
+                <Line type="monotone" dataKey="present" stroke="#10b981" activeDot={{ r: 8 }} name="Present" />
+                <Line type="monotone" dataKey="absent" stroke="#ef4444" activeDot={{ r: 8 }} name="Absent" />
+                <Line type="monotone" dataKey="halfDay" stroke="#f59e0b" activeDot={{ r: 8 }} name="Half Day" />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -139,13 +137,13 @@ const EmployeeDetailsDashboard: React.FC<EmployeeDetailsDashboardProps> = ({ emp
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={barChartData}>
                 <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" className="text-text-secondary" />
-                <YAxis className="text-text-secondary" />
+                <XAxis dataKey="name" />
+                <YAxis />
                 <Tooltip />
                 <Legend />
-                <Bar dataKey="present" fill="var(--success)" name="Present" />
-                <Bar dataKey="absent" fill="var(--danger)" name="Absent" />
-                <Bar dataKey="halfDay" fill="var(--warning)" name="Half Day" />
+                <Bar dataKey="present" fill="#10b981" name="Present" />
+                <Bar dataKey="absent" fill="#ef4444" name="Absent" />
+                <Bar dataKey="halfDay" fill="#f59e0b" name="Half Day" />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -165,7 +163,7 @@ const EmployeeDetailsDashboard: React.FC<EmployeeDetailsDashboardProps> = ({ emp
                   labelLine={false}
                   label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                 >
-                  {pieChartData.map((entry, index) => (
+                  {pieChartData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                   ))}
                 </Pie>
@@ -180,4 +178,4 @@ const EmployeeDetailsDashboard: React.FC<EmployeeDetailsDashboardProps> = ({ emp
   );
 };
 
-export default EmployeeDetailsDashboard; 
+export default EmployeeDetailsDashboard;

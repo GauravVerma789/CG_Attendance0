@@ -1,7 +1,8 @@
 import { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { mockUsers } from '../data/mockData';
 
-interface User {
+// Export User interface so it can be imported in other files
+export interface User {
   id: number;
   name: string;
   username: string;

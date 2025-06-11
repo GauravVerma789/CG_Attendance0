@@ -22,7 +22,7 @@ import {
 const AdminDashboardContent = () => {
   const { currentUser } = useAuth();
   const { attendanceRecords } = useAttendance();
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate] = useState(new Date());
   const [exportType, setExportType] = useState<'day' | 'week' | 'month'>('day');
   const [stats, setStats] = useState({
     totalStaff: 0,
