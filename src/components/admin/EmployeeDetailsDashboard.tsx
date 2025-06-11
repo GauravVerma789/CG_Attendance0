@@ -17,7 +17,7 @@ import {
 import { useAttendance } from '../../contexts/AttendanceContext';
 import { User } from '../../contexts/AuthContext'; // Assuming User type is exported
 import { format, parseISO } from 'date-fns';
-import { CheckCircle, XCircle, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, X } from 'lucide-react';
 
 interface EmployeeDetailsDashboardProps {
   employee: User | null;
@@ -75,102 +75,121 @@ const EmployeeDetailsDashboard: React.FC<EmployeeDetailsDashboardProps> = ({ emp
   const PIE_COLORS = ['#10b981', '#ef4444', '#f59e0b', '#6b7280']; // Green, Red, Yellow, Gray
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 p-4">
-      <div className="edusync-glass-card w-full max-w-6xl h-[90vh] overflow-y-auto p-6 relative flex flex-col">
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-text-secondary hover:text-text-primary text-2xl font-bold"
-          aria-label="Close details"
-        >
-          &times;
-        </button>
+    <div className="h-full bg-white shadow-lg overflow-y-auto">
+      <div className="p-4 md:p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl md:text-2xl font-bold text-text-primary">Employee Details</h2>
+          <button
+            onClick={onClose}
+            className="lg:hidden p-2 rounded-full hover:bg-gray-100"
+          >
+            <X className="w-6 h-6" />
+          </button>
+        </div>
 
-        <h2 className="text-3xl font-bold text-text-primary mb-6">Attendance Details for {employee.name}</h2>
+        {/* Employee Info */}
+        <div className="mb-8">
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-2xl md:text-3xl">
+              {employee.name.charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <h3 className="text-lg md:text-xl font-semibold text-text-primary">{employee.name}</h3>
+              <p className="text-text-secondary">ID: emp{employee.id}</p>
+            </div>
+          </div>
+        </div>
 
-        {/* Attendance Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           <div className="stats-card bg-green-50 border-l-4 border-green-600 p-4 rounded-lg shadow-md flex items-center justify-between">
             <div>
               <h3 className="text-text-secondary text-sm">Total Days Present</h3>
-              <p className="text-green-700 text-2xl font-bold">{presentDays}</p>
+              <p className="text-green-700 text-xl md:text-2xl font-bold">{presentDays}</p>
             </div>
-            <CheckCircle className="w-8 h-8 text-green-500" />
+            <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-green-500" />
           </div>
           <div className="stats-card bg-red-50 border-l-4 border-red-600 p-4 rounded-lg shadow-md flex items-center justify-between">
             <div>
               <h3 className="text-text-secondary text-sm">Total Days Absent</h3>
-              <p className="text-red-700 text-2xl font-bold">{absentDays}</p>
+              <p className="text-red-700 text-xl md:text-2xl font-bold">{absentDays}</p>
             </div>
-            <XCircle className="w-8 h-8 text-red-500" />
+            <XCircle className="w-6 h-6 md:w-8 md:h-8 text-red-500" />
           </div>
           <div className="stats-card bg-yellow-50 border-l-4 border-yellow-600 p-4 rounded-lg shadow-md flex items-center justify-between">
             <div>
               <h3 className="text-text-secondary text-sm">Total Days Half Day</h3>
-              <p className="text-yellow-700 text-2xl font-bold">{halfDays}</p>
+              <p className="text-yellow-700 text-xl md:text-2xl font-bold">{halfDays}</p>
             </div>
-            <Clock className="w-8 h-8 text-yellow-500" />
+            <Clock className="w-6 h-6 md:w-8 md:h-8 text-yellow-500" />
           </div>
         </div>
 
         {/* Charts Grid */}
-        <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="space-y-6">
           {/* Line Chart */}
-          <div className="chart-container flex flex-col">
-            <h3 className="text-xl font-semibold text-text-primary mb-4">Daily Attendance Trend</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={lineChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="present" stroke="#10b981" activeDot={{ r: 8 }} name="Present" />
-                <Line type="monotone" dataKey="absent" stroke="#ef4444" activeDot={{ r: 8 }} name="Absent" />
-                <Line type="monotone" dataKey="halfDay" stroke="#f59e0b" activeDot={{ r: 8 }} name="Half Day" />
-              </LineChart>
-            </ResponsiveContainer>
+          <div className="edusync-glass-card p-4 md:p-6">
+            <h3 className="text-lg md:text-xl font-semibold text-text-primary mb-4">Daily Attendance Trend</h3>
+            <div className="h-[300px] md:h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={lineChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="present" stroke="#10b981" activeDot={{ r: 8 }} name="Present" />
+                  <Line type="monotone" dataKey="absent" stroke="#ef4444" activeDot={{ r: 8 }} name="Absent" />
+                  <Line type="monotone" dataKey="halfDay" stroke="#f59e0b" activeDot={{ r: 8 }} name="Half Day" />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
           {/* Bar Chart */}
-          <div className="chart-container flex flex-col">
-            <h3 className="text-xl font-semibold text-text-primary mb-4">Monthly Attendance Summary</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={barChartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="present" fill="#10b981" name="Present" />
-                <Bar dataKey="absent" fill="#ef4444" name="Absent" />
-                <Bar dataKey="halfDay" fill="#f59e0b" name="Half Day" />
-              </BarChart>
-            </ResponsiveContainer>
+          <div className="edusync-glass-card p-4 md:p-6">
+            <h3 className="text-lg md:text-xl font-semibold text-text-primary mb-4">Monthly Attendance Summary</h3>
+            <div className="h-[300px] md:h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={barChartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="present" fill="#10b981" name="Present" />
+                  <Bar dataKey="absent" fill="#ef4444" name="Absent" />
+                  <Bar dataKey="halfDay" fill="#f59e0b" name="Half Day" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
           {/* Pie Chart */}
-          <div className="chart-container lg:col-span-2 flex flex-col items-center justify-center">
-            <h3 className="text-xl font-semibold text-text-primary mb-4">Overall Attendance Distribution</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={pieChartData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={100}
-                  fill="#8884d8"
-                  dataKey="value"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                >
-                  {pieChartData.map((_entry, index) => (
-                    <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-                <Legend />
-              </PieChart>
-            </ResponsiveContainer>
+          <div className="edusync-glass-card p-4 md:p-6">
+            <h3 className="text-lg md:text-xl font-semibold text-text-primary mb-4">Overall Attendance Distribution</h3>
+            <div className="h-[300px] md:h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieChartData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  >
+                    {pieChartData.map((_entry, index) => (
+                      <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
           </div>
         </div>
       </div>

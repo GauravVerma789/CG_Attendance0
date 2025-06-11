@@ -1,8 +1,6 @@
 import { AttendanceRecord } from '../contexts/AttendanceContext';
 import { mockUsers } from '../data/mockData';
 import { format, parseISO, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
-import jsPDF from 'jspdf';
-import 'jspdf-autotable';
 
 // Helper function to escape CSV values
 const escapeCSV = (value: string | number): string => {
@@ -116,98 +114,6 @@ export const exportToCSV = (records: AttendanceRecord[], dateRange: 'day' | 'wee
     console.log('exportToCSV: File download initiated.');
   } catch (error) {
     console.error('exportToCSV: Error during export:', error);
-    alert('Failed to export data. Please try again.');
-  }
-};
-
-export const exportToPDF = (records: AttendanceRecord[], dateRange: 'day' | 'week' | 'month', selectedDate: Date) => {
-  try {
-    console.log('exportToPDF: Starting export process.', { records, dateRange, selectedDate });
-    // Filter records based on date range
-    const filteredRecords = filterRecordsByDateRange(records, dateRange, selectedDate);
-    
-    if (filteredRecords.length === 0) {
-      alert('No records found for the selected date range.');
-      console.log('exportToPDF: No records found for the selected date range.');
-      return;
-    }
-    console.log('exportToPDF: Filtered records count:', filteredRecords.length);
-    
-    // Create PDF document
-    const doc = new jsPDF();
-    console.log('exportToPDF: jsPDF document created.');
-    
-    // Add title
-    const title = `Attendance Report - ${dateRange.charAt(0).toUpperCase() + dateRange.slice(1)} of ${format(selectedDate, 'MMMM d, yyyy')}`;
-    doc.setFontSize(16);
-    doc.text(title, 14, 15);
-    
-    // Add date range
-    doc.setFontSize(10);
-    const dateRangeText = getDateRangeText(dateRange, selectedDate);
-    doc.text(dateRangeText, 14, 25);
-    
-    // Add total records count
-    doc.text(`Total Records: ${filteredRecords.length}`, 14, 32);
-    console.log('exportToPDF: Title, date range, and total records added.');
-    
-    // Prepare table data
-    const tableData = filteredRecords.map(record => {
-      const user = mockUsers.find(u => u.id === record.userId);
-      let workingHours = "-";
-      
-      if (record.punchInTime && record.punchOutTime) {
-        const [inHours, inMinutes] = record.punchInTime.split(':').map(Number);
-        const [outHours, outMinutes] = record.punchOutTime.split(':').map(Number);
-        
-        const totalMinutes = (outHours * 60 + outMinutes) - (inHours * 60 + inMinutes);
-        const hours = Math.floor(totalMinutes / 60);
-        const minutes = totalMinutes % 60;
-        
-        workingHours = `${hours}h ${minutes}m`;
-      }
-      
-      return [
-        format(parseISO(record.date), 'MMM dd, yyyy'),
-        user?.name || 'Unknown',
-        user?.department || 'Not Assigned',
-        record.status.charAt(0).toUpperCase() + record.status.slice(1),
-        record.punchInTime || "-",
-        record.punchOutTime || "-",
-        workingHours
-      ];
-    });
-    console.log('exportToPDF: Table data prepared.', tableData.length, 'rows.');
-    
-    // Add table
-    (doc as any).autoTable({
-      head: [['Date', 'Employee', 'Department', 'Status', 'Punch In', 'Punch Out', 'Working Hours']],
-      body: tableData,
-      startY: 40,
-      theme: 'grid',
-      styles: { 
-        fontSize: 8,
-        cellPadding: 2
-      },
-      headStyles: { 
-        fillColor: [79, 70, 229], // Using primary color from your theme
-        textColor: 255,
-        fontStyle: 'bold'
-      },
-      alternateRowStyles: {
-        fillColor: [249, 250, 251] // Light gray for better readability
-      },
-      margin: { top: 40 }
-    });
-    console.log('exportToPDF: Table added to PDF.');
-    
-    // Save PDF
-    const fileName = `attendance_${dateRange}_${format(selectedDate, 'yyyy-MM-dd')}.pdf`;
-    console.log('exportToPDF: Attempting to save PDF with filename:', fileName);
-    doc.save(fileName);
-    console.log('exportToPDF: PDF file save initiated.');
-  } catch (error) {
-    console.error('exportToPDF: Error during export:', error);
     alert('Failed to export data. Please try again.');
   }
 };

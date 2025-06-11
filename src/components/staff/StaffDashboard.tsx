@@ -5,7 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useAttendance } from '../../contexts/AttendanceContext';
 import Calendar2 from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
-import { exportToCSV, exportToPDF } from '../../utils/exportUtils';
+import { exportToCSV } from '../../utils/exportUtils';
 import { useNavigate } from 'react-router-dom';
 import {
   BarChart,
@@ -117,12 +117,8 @@ const StaffDashboard = () => {
     return null;
   };
 
-  const handleExport = (format: 'csv' | 'pdf') => {
-    if (format === 'csv') {
-      exportToCSV(userAttendance, exportType, selectedDate);
-    } else {
-      exportToPDF(userAttendance, exportType, selectedDate);
-    }
+  const handleExport = () => {
+    exportToCSV(userAttendance, exportType, selectedDate);
   };
 
   // Prepare data for the chart
@@ -231,18 +227,11 @@ const StaffDashboard = () => {
               <option value="month">This Month</option>
             </select>
             <button
-              onClick={() => handleExport('csv')}
+              onClick={handleExport}
               className="btn btn-success flex items-center space-x-2"
             >
               <Download className="w-5 h-5" />
               <span>Export CSV</span>
-            </button>
-            <button
-              onClick={() => handleExport('pdf')}
-              className="btn btn-danger flex items-center space-x-2"
-            >
-              <Download className="w-5 h-5" />
-              <span>Export PDF</span>
             </button>
           </div>
         </div>

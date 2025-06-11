@@ -78,9 +78,9 @@ const AdminDashboard = () => {
   }
 
   return (
-    <div className="flex min-h-screen page-background">
+    <div className="flex flex-col lg:flex-row min-h-screen page-background">
       <Sidebar />
-      <div className="flex-1 p-8">
+      <main className="flex-1 p-4 md:p-6 lg:p-8 overflow-x-hidden">
         <Routes>
           <Route index element={<AdminDashboardContent />} />
           <Route path="dashboard" element={<AdminDashboardContent />} />
@@ -88,12 +88,14 @@ const AdminDashboard = () => {
           <Route path="employees" element={<AdminEmployees />} />
           <Route path="calendar" element={<AdminCalendar />} />
         </Routes>
-      </div>
+      </main>
       {selectedEmployee && (
-        <EmployeeDetailsDashboard
-          employee={selectedEmployee}
-          onClose={handleCloseEmployeeDetails}
-        />
+        <div className="fixed inset-0 z-50 lg:static lg:z-auto lg:w-1/3 xl:w-1/4">
+          <EmployeeDetailsDashboard
+            employee={selectedEmployee}
+            onClose={handleCloseEmployeeDetails}
+          />
+        </div>
       )}
     </div>
   );
